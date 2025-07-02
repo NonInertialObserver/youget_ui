@@ -57,6 +57,14 @@ class PathChooseFrame(Frame):
             raise FileNotFoundError(f"Path '{path}' does not exist.")
         self.textvariable.set(path)
     
+class PromptedEntry(Frame):
+    #左侧有提示词的Entry控件
+    def __init__(self, master = None, *, border = 0, borderwidth = 0, class_ = "", cursor = "", height = 0, name = '', padding = 0, 
+                 relief = 0, style = "", takefocus = "", width = 0, prompt:str= '请选择文件', textvariable=None):
+        super().__init__(master, border=border, borderwidth=borderwidth, class_=class_, cursor=cursor, height=height, 
+                         name=name, padding=padding, relief=relief, style=style, takefocus=takefocus, width=width)
+        #UNFINISHED
+
 if __name__ == '__main__':
     root = Tk()
     root.geometry('400x100')

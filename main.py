@@ -9,6 +9,22 @@ import os
 import sys
 import locale
 
+import you_get.version
+
+class SettingsToplevel(Toplevel):
+    "the sub-window of settings "
+    def __init__(self, master = None, cnf = ..., *, background = ..., bd = 0, 
+                 bg = ..., border = 0, borderwidth = 0, class_ = "Toplevel", colormap = "", container = False, 
+                 cursor = "", height = 0, highlightbackground = ..., highlightcolor = ..., highlightthickness = 0, menu = ..., 
+                 name = ..., padx = 0, pady = 0, relief = "flat", screen = "", takefocus = 0, use = ..., visual = "", width = 0):
+        
+        super().__init__(master, cnf, background=background, bd=bd, bg=bg, border=border, borderwidth=borderwidth, class_=class_, 
+                         colormap=colormap, container=container, cursor=cursor, height=height, highlightbackground=highlightbackground, 
+                         highlightcolor=highlightcolor, highlightthickness=highlightthickness, menu=menu, name=name, padx=padx, pady=pady, 
+                         relief=relief, screen=screen, takefocus=takefocus, use=use, visual=visual, width=width)
+        
+        
+
 class YouGetUI:
     def __init__(self, root:Tk):
         self.root = root
@@ -33,26 +49,26 @@ class YouGetUI:
         
         # 标题
         header = ttk.Label(main_frame, text="You-Get 视频下载器", style='Header.TLabel')
-        header.pack(pady=(0, 20))
+        header.pack(pady=(0, 5))
         
         # URL输入部分
         url_frame = ttk.Frame(main_frame)
         url_frame.pack(fill=tk.X, pady=5)
         
-        ttk.Label(url_frame, text="视频URL:").pack(side=tk.LEFT, padx=(0, 10))
+        ttk.Label(url_frame, text="视频URL:").pack(side=tk.LEFT, padx=(0, 1))
         self.url_entry = ttk.Entry(url_frame, width=60)
         self.url_entry.pack(side=tk.LEFT, fill=tk.X, expand=True)
         self.url_entry.focus()
         
         # 下载选项框架
         options_frame = ttk.LabelFrame(main_frame, text="下载选项", padding=10)
-        options_frame.pack(fill=tk.X, pady=10)
+        options_frame.pack(fill=tk.X, pady=1)
         
         # 下载路径
         path_frame = ttk.Frame(options_frame)
-        path_frame.pack(fill=tk.X, pady=5)
+        path_frame.pack(fill=tk.X, pady=1)
         
-        ttk.Label(path_frame, text="保存路径:").pack(side=tk.LEFT, padx=(0, 10))
+        ttk.Label(path_frame, text="保存路径:").pack(side=tk.LEFT, padx=(0, 1))
         self.path_var = tk.StringVar(value=os.path.expanduser("~/Downloads"))
         path_entry = ttk.Entry(path_frame, textvariable=self.path_var, width=50)
         path_entry.pack(side=tk.LEFT, fill=tk.X, expand=True)
@@ -62,7 +78,7 @@ class YouGetUI:
         
         # 清晰度选择
         quality_frame = ttk.Frame(options_frame)
-        quality_frame.pack(fill=tk.X, pady=5)
+        quality_frame.pack(fill=tk.X, pady=1)
         
         ttk.Label(quality_frame, text="视频清晰度:").pack(side=tk.LEFT, padx=(0, 10))
         self.quality_var = tk.StringVar()
@@ -281,6 +297,15 @@ def main():
     app = YouGetUI(root)
     root.mainloop()
 
+def yougettest():
+    import you_get
+    print(you_get.version)
+    # you_get.main()
+
+debug=True
 if __name__ == "__main__":
     print('start test...')
+    if debug :
+        yougettest()
+        
     main()

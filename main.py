@@ -13,8 +13,8 @@ class YouGetUI:
     def __init__(self, root:Tk):
         self.root = root
         root.title("You-Get GUI Downloader")
-        root.iconphoto(False, tk.PhotoImage(file="./icon.png"))
-        root.geometry("700x500")
+        root.iconbitmap("./icon.ico")
+        root.geometry("700x700")
         root.resizable(True, True)
         
         # 检测系统编码
@@ -67,7 +67,7 @@ class YouGetUI:
         ttk.Label(quality_frame, text="视频清晰度:").pack(side=tk.LEFT, padx=(0, 10))
         self.quality_var = tk.StringVar()
         quality_combo = ttk.Combobox(quality_frame, textvariable=self.quality_var, width=15)
-        quality_combo['values'] = ('自动选择', '超清', '高清', '标清')
+        quality_combo['values'] = ('自动选择', '超清4K', '高清1080p', '标清480p')
         quality_combo.current(0)
         quality_combo.pack(side=tk.LEFT)
         
@@ -91,6 +91,11 @@ class YouGetUI:
         self.cancel_btn = ttk.Button(btn_frame, text="取消", command=self.cancel_download, state=tk.DISABLED)
         self.cancel_btn.pack(side=tk.LEFT, padx=5)
         
+        # 状态栏
+        self.status_var = tk.StringVar(value="就绪")
+        self.status_bar = ttk.Label(root, textvariable=self.status_var, relief=tk.SUNKEN, anchor=tk.W)
+        self.status_bar.pack(side=tk.BOTTOM, fill=tk.X)
+
         # 日志输出
         log_frame = ttk.LabelFrame(main_frame, text="下载日志", padding=10)
         log_frame.pack(fill=tk.BOTH, expand=True, pady=(10, 0))
@@ -98,11 +103,6 @@ class YouGetUI:
         self.log_text = scrolledtext.ScrolledText(log_frame, height=10, wrap=tk.WORD)
         self.log_text.pack(fill=tk.BOTH, expand=True)
         self.log_text.config(state=tk.DISABLED)
-        
-        # 状态栏
-        self.status_var = tk.StringVar(value="就绪")
-        status_bar = ttk.Label(root, textvariable=self.status_var, relief=tk.SUNKEN, anchor=tk.W)
-        status_bar.pack(side=tk.BOTTOM, fill=tk.X)
         
         # 下载控制变量
         self.download_process = None

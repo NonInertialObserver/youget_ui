@@ -10,9 +10,10 @@ import sys
 import locale
 
 class YouGetUI:
-    def __init__(self, root):
+    def __init__(self, root:Tk):
         self.root = root
         root.title("You-Get GUI Downloader")
+        root.iconphoto(False, tk.PhotoImage(file="./icon.png"))
         root.geometry("700x500")
         root.resizable(True, True)
         

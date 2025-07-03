@@ -21,3 +21,4 @@ build/
 *.egg-info/
 node_modules/
 *.orig
+ffmpeg_win/

@@ -22,7 +22,7 @@ class SettingsToplevel(Toplevel):
     def __init__(self, master=None):
         super().__init__(master)
         self.title("设置")
-        self.geometry("400x400")
+        self.geometry("500x400")
         self.resizable(False, False)
         self.save_settings_func=self.default_save_settings
 
@@ -60,11 +60,8 @@ class SettingsToplevel(Toplevel):
                 out, err = p.communicate()
                 vers = str(out, 'utf-8').split('\n')[0].split()
                 assert (vers[0] == 'ffmpeg' and vers[2][0] > '0') or (vers[0] == 'avconv')
-                try:
-                    v = vers[2][1:] if vers[2][0] == 'n' else vers[2]
-                    version = [int(i) for i in v.split('.')]
-                except:
-                    version = [1, 0]
+                
+                version = vers[2][1:] if vers[2][0] == 'n' else vers[2]
                 return cmd, 'ffprobe', version
             except:
                 return None

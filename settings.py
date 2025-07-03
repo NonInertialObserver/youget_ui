@@ -1,14 +1,28 @@
+import subprocess
 from tkinter import *
 from tkinter.ttk import *
 
+import you_get
+
 import widgets
+
+info_msg='''\
+YouGet UI {version} with you-get {you_get_version}
+with ffmpeg {ffmpeg_version}
+
+This program comes with ABSOLUTELY NO WARRANTY.
+This is free software, and you are welcome redistribute it under certain conditions.
+See the GNU General Public License for more details.
+
+You can contact us on <noninertialobserver@outlook.com>.
+YouGet UI {version} Copyright (C) 2020-2025 Noninertial Observer'''
 
 class SettingsToplevel(Toplevel):
     "the sub-window of settings "
     def __init__(self, master=None):
         super().__init__(master)
         self.title("设置")
-        self.geometry("400x250")
+        self.geometry("400x400")
         self.resizable(False, False)
         self.save_settings_func=self.default_save_settings
 
@@ -38,6 +52,29 @@ class SettingsToplevel(Toplevel):
         save_btn.pack(side=LEFT, padx=30)
         cancel_btn = Button(btn_frame, text="取消", command=self.destroy)
         cancel_btn.pack(side=RIGHT, padx=30)
+
+        # 信息显示
+        def get_usable_ffmpeg(cmd):
+            try:
+                p = subprocess.Popen([cmd, '-version'], stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                out, err = p.communicate()
+                vers = str(out, 'utf-8').split('\n')[0].split()
+                assert (vers[0] == 'ffmpeg' and vers[2][0] > '0') or (vers[0] == 'avconv')
+                try:
+                    v = vers[2][1:] if vers[2][0] == 'n' else vers[2]
+                    version = [int(i) for i in v.split('.')]
+                except:
+                    version = [1, 0]
+                return cmd, 'ffprobe', version
+            except:
+                return None
+        
+        FFMPEG, FFPROBE, FFMPEG_VERSION = get_usable_ffmpeg('ffmpeg') or (None, None, None)
+        # ffmpeg_v = subprocess.Popen(['ffmpeg', '-version'], stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        you_get_v = you_get.version.__version__
+        from main import __version__
+        self.info_label = Label(self, text=info_msg.format(version=__version__, you_get_version=you_get_v, ffmpeg_version=FFMPEG_VERSION))
+        self.info_label.pack(side=BOTTOM, fill='x', expand=True)
 
     def default_save_settings(self,path,proxy_type,proxy):
         # 这里可以扩展为保存到配置文件或主窗口通信

@@ -13,6 +13,8 @@ import settings
         
 import widgets
 
+__version__ = "0.0.1 beta 2"
+
 class YouGetUI:
     def __init__(self, root:tk.Tk):
         self.root = root
@@ -76,7 +78,7 @@ class YouGetUI:
         self.download_btn.pack(side=tk.LEFT, padx=5)
         self.cancel_btn = ttk.Button(btn_frame, text="取消", command=self.cancel_download, state=tk.DISABLED)
         self.cancel_btn.pack(side=tk.LEFT, padx=5)
-        
+
         # 日志输出
         log_frame = ttk.LabelFrame(self.main_frame, text="下载日志", padding=10)
         log_frame.pack(fill=tk.BOTH, expand=True, pady=(2, 0), side=tk.BOTTOM)

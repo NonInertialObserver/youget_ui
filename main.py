@@ -7,16 +7,18 @@ import os
 import sys
 import locale
 
-import you_get.version
+# import you_get.version
 
+import settings
         
+import widgets
 
 class YouGetUI:
     def __init__(self, root:tk.Tk):
         self.root = root
         root.title("You-Get GUI Downloader")
         root.iconbitmap("./icon.ico")
-        root.geometry("700x700")
+        root.geometry("700x500")
         root.resizable(True, True)
         
         # 检测系统编码
@@ -30,91 +32,81 @@ class YouGetUI:
         self.style.configure('Header.TLabel', font=('Arial', 14, 'bold'), foreground='#333')
         
         # 创建主框架
-        main_frame = ttk.Frame(root, padding="20")
-        main_frame.pack(fill=tk.BOTH, expand=True)
+        self.main_frame = ttk.Frame(root, padding="20")
+        self.main_frame.pack(fill=tk.BOTH, expand=True)
         
         # 标题
-        header = ttk.Label(main_frame, text="You-Get 视频下载器", style='Header.TLabel')
-        header.pack(pady=(0, 5))
+        header = ttk.Label(self.main_frame, text="You-Get 视频下载器", style='Header.TLabel')
+        header.pack(pady=(0, 2))
         
         # URL输入部分
-        url_frame = ttk.Frame(main_frame)
-        url_frame.pack(fill=tk.X, pady=5)
+        url_frame = ttk.Frame(self.main_frame)
+        url_frame.pack(fill=tk.X, pady=2)
         
         ttk.Label(url_frame, text="视频URL:").pack(side=tk.LEFT, padx=(0, 1))
         self.url_entry = ttk.Entry(url_frame, width=60)
         self.url_entry.pack(side=tk.LEFT, fill=tk.X, expand=True)
         self.url_entry.focus()
         
-        # 下载选项框架
-        options_frame = ttk.LabelFrame(main_frame, text="下载选项", padding=10)
-        options_frame.pack(fill=tk.X, pady=1)
-        
-        # 下载路径
-        path_frame = ttk.Frame(options_frame)
-        path_frame.pack(fill=tk.X, pady=1)
-        
-        ttk.Label(path_frame, text="保存路径:").pack(side=tk.LEFT, padx=(0, 1))
-        self.path_var = tk.StringVar(value=os.path.expanduser("~/Downloads"))
-        path_entry = ttk.Entry(path_frame, textvariable=self.path_var, width=50)
-        path_entry.pack(side=tk.LEFT, fill=tk.X, expand=True)
-        
-        browse_btn = ttk.Button(path_frame, text="浏览...", command=self.browse_directory)
-        browse_btn.pack(side=tk.RIGHT, padx=(10, 0))
+        # 设置默认参数
+        self.path_var = widgets.StringVar(value=os.path.expanduser("~/Downloads"))
+        self.proxy_type_var = widgets.StringVar(value="HTTP")
+        self.proxy_var = widgets.StringVar()
+
         
         # 清晰度选择
-        quality_frame = ttk.Frame(options_frame)
+        quality_frame = ttk.Frame(self.root)
         quality_frame.pack(fill=tk.X, pady=1)
         
         ttk.Label(quality_frame, text="视频清晰度:").pack(side=tk.LEFT, padx=(0, 10))
-        self.quality_var = tk.StringVar()
+        self.quality_var = tk.StringVar()        
         quality_combo = ttk.Combobox(quality_frame, textvariable=self.quality_var, width=15)
         quality_combo['values'] = ('自动选择', '超清4K', '高清1080p', '标清480p')
         quality_combo.current(0)
         quality_combo.pack(side=tk.LEFT)
-        
-        # 代理设置
-        proxy_frame = ttk.Frame(options_frame)
-        proxy_frame.pack(fill=tk.X, pady=5)
-        
-        ttk.Label(proxy_frame, text="HTTP代理:").pack(side=tk.LEFT, padx=(0, 10))
-        self.proxy_var = tk.StringVar()
-        proxy_entry = ttk.Entry(proxy_frame, textvariable=self.proxy_var, width=40)
-        proxy_entry.pack(side=tk.LEFT)
-        ttk.Label(proxy_frame, text="(可选)").pack(side=tk.LEFT, padx=(5, 0))
+
+        # 设置按钮
+        settings_btn = ttk.Button(self.main_frame, text="设置...", command=self.open_settings)
+        settings_btn.pack(anchor='ne', padx=2, pady=2)
         
         # 控制按钮
-        btn_frame = ttk.Frame(main_frame)
-        btn_frame.pack(pady=10)
-        
+        btn_frame = ttk.Frame(self.root)
+        btn_frame.pack(pady=1)
         self.download_btn = ttk.Button(btn_frame, text="开始下载", command=self.start_download)
         self.download_btn.pack(side=tk.LEFT, padx=5)
-        
         self.cancel_btn = ttk.Button(btn_frame, text="取消", command=self.cancel_download, state=tk.DISABLED)
         self.cancel_btn.pack(side=tk.LEFT, padx=5)
         
-        # 状态栏
-        self.status_var = tk.StringVar(value="就绪")
-        self.status_bar = ttk.Label(root, textvariable=self.status_var, relief=tk.SUNKEN, anchor=tk.W)
-        self.status_bar.pack(side=tk.BOTTOM, fill=tk.X)
-
         # 日志输出
-        log_frame = ttk.LabelFrame(main_frame, text="下载日志", padding=10)
-        log_frame.pack(fill=tk.BOTH, expand=True, pady=(10, 0))
-        
+        log_frame = ttk.LabelFrame(self.main_frame, text="下载日志", padding=10)
+        log_frame.pack(fill=tk.BOTH, expand=True, pady=(2, 0), side=tk.BOTTOM)
         self.log_text = scrolledtext.ScrolledText(log_frame, height=10, wrap=tk.WORD)
         self.log_text.pack(fill=tk.BOTH, expand=True)
         self.log_text.config(state=tk.DISABLED)
         
+        # 状态栏
+        self.status_var = tk.StringVar(value="就绪")
+        self.status_bar = ttk.Label(self.root, textvariable=self.status_var, relief=tk.SUNKEN, anchor=tk.W)
+        self.status_bar.pack(side=tk.BOTTOM, fill=tk.X)
+
+        
         # 下载控制变量
         self.download_process = None
         self.is_downloading = False
+
+    def open_settings(self):
+        def on_save(path, proxy_type, proxy):
+            self.path_var.set(path)
+            self.proxy_type_var.set(proxy_type)
+            self.proxy_var.set(proxy)
+        win = settings.SettingsToplevel(self.root)
+        win.save_settings(on_save)
+        win.grab_set()
+        
     
     def browse_directory(self):
-        """选择下载目录"""
-        directory = filedialog.askdirectory()
-        if directory:
-            self.path_var.set(directory)
+        """选择下载目录（已集成在PathChooseFrame中，无需单独按钮）"""
+        pass
     
     def start_download(self):
         """开始下载视频"""
@@ -144,9 +136,12 @@ class YouGetUI:
             
         # 添加代理设置
         proxy = self.proxy_var.get().strip()
+        proxy_type = self.proxy_type_var.get()
         if proxy:
-            cmd.extend(['--http-proxy', proxy])
-            
+            if proxy_type == "SOCKS":
+                cmd.extend(['--socks-proxy', proxy])
+            else:
+                cmd.extend(['--http-proxy', proxy])
         cmd.append(url)
         
         self.log_message(f"开始下载: {url}")

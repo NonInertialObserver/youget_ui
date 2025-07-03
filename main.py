@@ -1,5 +1,3 @@
-from tkinter import *
-from tkinter.ttk import *
 
 import tkinter as tk
 from tkinter import ttk, filedialog, scrolledtext, messagebox
@@ -11,22 +9,10 @@ import locale
 
 import you_get.version
 
-class SettingsToplevel(Toplevel):
-    "the sub-window of settings "
-    def __init__(self, master = None, cnf = ..., *, background = ..., bd = 0, 
-                 bg = ..., border = 0, borderwidth = 0, class_ = "Toplevel", colormap = "", container = False, 
-                 cursor = "", height = 0, highlightbackground = ..., highlightcolor = ..., highlightthickness = 0, menu = ..., 
-                 name = ..., padx = 0, pady = 0, relief = "flat", screen = "", takefocus = 0, use = ..., visual = "", width = 0):
-        
-        super().__init__(master, cnf, background=background, bd=bd, bg=bg, border=border, borderwidth=borderwidth, class_=class_, 
-                         colormap=colormap, container=container, cursor=cursor, height=height, highlightbackground=highlightbackground, 
-                         highlightcolor=highlightcolor, highlightthickness=highlightthickness, menu=menu, name=name, padx=padx, pady=pady, 
-                         relief=relief, screen=screen, takefocus=takefocus, use=use, visual=visual, width=width)
-        
         
 
 class YouGetUI:
-    def __init__(self, root:Tk):
+    def __init__(self, root:tk.Tk):
         self.root = root
         root.title("You-Get GUI Downloader")
         root.iconbitmap("./icon.ico")

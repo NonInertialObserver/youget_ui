@@ -60,20 +60,36 @@ class PathChooseFrame(Frame):
 class PromptedEntry(Frame):
     #左侧有提示词的Entry控件
     def __init__(self, master = None, *, border = 0, borderwidth = 0, class_ = "", cursor = "", height = 0, name = '', padding = 0, 
-                 relief = 0, style = "", takefocus = "", width = 0, prompt:str= '请选择文件', textvariable=None):
+                 relief = FLAT, style = "", takefocus = "", width = 0, prompt:str= '请选择文件', textvariable=None):
         super().__init__(master, border=border, borderwidth=borderwidth, class_=class_, cursor=cursor, height=height, 
                          name=name, padding=padding, relief=relief, style=style, takefocus=takefocus, width=width)
-        #UNFINISHED
+        if not textvariable:
+            textvariable=StringVar()
+        self.textvariable = textvariable
+        self._prompt_l = Label(self, text=prompt)
+        self._prompt_e = Entry(self, background='white', textvariable=textvariable) 
+    
+    def pack(self, **kwargs):
+        self._prompt_l.pack(side=LEFT, )
+        self._prompt_e.pack(side=LEFT, fill=X, expand=True, )
+        super().pack(**kwargs)
+
+    def get(self):
+        return self.textvariable.get()
+    
+    def set(self, text: str):
+        self.textvariable.set(text)
 
 if __name__ == '__main__':
     root = Tk()
-    root.geometry('400x100')
+    # root.geometry('400x100')
     frame = PathChooseFrame(root, prompt='请选择目录:')
+    frame2 = PromptedEntry(root, prompt='请输入文本:')
     frame.pack()
-    
+    frame2.pack()
     def show_path():
         print(frame.get())
     
     Button(root, text='Show Path', command=show_path).pack(pady=10)
-    
+    Button(root, text='read text', command=lambda: print(frame2.get())).pack(pady=10)
     root.mainloop()
